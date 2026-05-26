@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Little Treasure Box 🐱</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --cream: #fff8f0;
+      --pink: #ffb7c5;
+      --coral: #ff7b7b;
+      --lavender: #c9b8f5;
+      --shadow: rgba(0,0,0,0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--cream);
+      font-family: 'Quicksand', sans-serif;
+      overflow-x: hidden;
+
+      background-image:
+        radial-gradient(circle at 20% 30%, #ffe0f0 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, #e0f0ff 0%, transparent 50%);
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    header h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(2.2rem, 7vw, 4rem);
+
+      background: linear-gradient(
+        135deg,
+        #ff7b7b,
+        #c9b8f5,
+        #ff7b7b
+      );
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      color: #666;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .envelope {
+      height: 380px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    @keyframes wiggle {
+      0% { transform: rotate(-4deg); }
+      25% { transform: rotate(4deg); }
+      50% { transform: rotate(-3deg); }
+      75% { transform: rotate(3deg); }
+      100% { transform: rotate(-4deg); }
+    }
+
+    @keyframes floaty {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .envelope:not(.open) {
+      animation:
+        wiggle 2.2s infinite ease-in-out,
+        floaty 4s infinite ease-in-out;
+    }
+
+    .envelope:hover:not(.open) {
+      animation-duration: 0.6s, 2s;
+    }
+
+    .envelope-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      transform-style: preserve-3d;
+    }
+
+    .envelope.open .envelope-inner {
+      transform: rotateY(180deg);
+    }
+
+    .envelope-front,
+    .envelope-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px var(--shadow);
+      backface-visibility: hidden;
+    }
+
+    .envelope-front {
+      background: linear-gradient(145deg, #ffd6e0, #ff8fa3);
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      padding: 2rem;
+    }
+
+    .envelope-front::after {
+      content: '✉️';
+      font-size: 4.5rem;
+      margin-bottom: 1rem;
+
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    }
+
+    .envelope-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.5rem;
+      color: #4a3f5c;
+      text-align: center;
+    }
+
+    .envelope-back {
+      background: linear-gradient(145deg, #fff0f5, #f8e1ff);
+      transform: rotateY(180deg);
+
+      padding: 1.5rem;
+
+      display: flex;
+      flex-direction: column;
+
+      overflow-y: auto;
+
+      scrollbar-width: thin;
+    }
+
+    .envelope-back::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .envelope-back::-webkit-scrollbar-thumb {
+      background: #ffb7c5;
+      border-radius: 10px;
+    }
+
+    .back-btn {
+      align-self: flex-start;
+
+      background: #ff7b7b;
+      color: white;
+
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+
+      font-size: 0.95rem;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      margin-bottom: 1rem;
+
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+
+      transition: all 0.25s ease;
+    }
+
+    .back-btn:hover {
+      background: #ff5f5f;
+      transform: translateY(-2px);
+    }
+
+    .back-btn:active {
+      transform: scale(0.96);
+    }
+
+    .content h3 {
+      font-family: 'Pacifico', cursive;
+      color: #ff7b7b;
+
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+
+      gap: 10px;
+      margin: 1rem 0;
+    }
+
+    .image-gallery img {
+      width: 100%;
+      height: 130px;
+
+      object-fit: cover;
+
+      border-radius: 12px;
+      border: 3px solid white;
+
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+    }
+
+    .image-gallery img:hover {
+      transform: scale(1.05);
+
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .message {
+      background: white;
+
+      padding: 1.2rem;
+      border-radius: 12px;
+
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 100%;
+
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    .music-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+
+      z-index: 1000;
+
+      padding: 12px 18px;
+
+      border-radius: 30px;
+      border: none;
+
+      background: #ff7b7b;
+      color: white;
+
+      font-size: 1rem;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+
+      transition: all 0.3s ease;
+    }
+
+    .music-btn:hover {
+      transform: translateY(-3px);
+      background: #ff5f5f;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Music -->
+  <audio id="bgMusic" loop>
+    <source src="poorkidmusic-kawaii-drops-no-copy-right-386533.mp3" type="audio/mpeg">
+  </audio>
+
+  <header>
+    <h1>My Little Treasure Box 🐱</h1>
+    <p>Tap the envelopes to open your surprises! 🎈</p>
+  </header>
+
+  <div class="grid">
+
+    <!-- Envelope 1 -->
+    <div class="envelope">
+
+      <div class="envelope-inner">
+
+        <div class="envelope-front">
+          <div class="envelope-title">
+            Favorite Pictures 📸
+          </div>
+        </div>
+
+        <div class="envelope-back">
+
+          <button class="back-btn">
+            ⬅ Back
+          </button>
+
+          <div class="content">
+
+            <h3>Favorite Pictures 💕</h3>
+
+            <div class="image-gallery">
+              <img src="./photo_2026-05-26_19-14-50.jpg">
+              <img src="./photo_2026-05-26_19-49-25.jpg">
+              <img src="./photo_2025-06-27_22-19-02.jpg">
+              <img src="./a4f339ee-ca36-49a8-9583-a5ca4ebdcf03.jpg">
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Envelope 2 -->
+    <div class="envelope">
+
+      <div class="envelope-inner">
+
+        <div class="envelope-front">
+          <div class="envelope-title">
+            Food 🍜🍓
+          </div>
+        </div>
+
+        <div class="envelope-back">
+
+          <button class="back-btn">
+            ⬅ Back
+          </button>
+
+          <div class="content">
+
+            <h3>Yummy Food Memories 🍰</h3>
+
+            <div class="image-gallery">
+              <img src="e3d4684d-4833-4430-8a88-1e7ef112c0a7.jpg">
+              <img src="photo_2026-05-26_19-58-25.jpg">
+              <img src="photo_2025-11-13_18-24-57.jpg">
+              <img src="photo_2026-05-26_20-01-55.jpg">
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Envelope 3 -->
+    <div class="envelope">
+
+      <div class="envelope-inner">
+
+        <div class="envelope-front">
+          <div class="envelope-title">
+            My Message 💌
+          </div>
+        </div>
+
+        <div class="envelope-back">
+
+          <button class="back-btn">
+            ⬅ Back
+          </button>
+
+          <div class="content">
+
+            <h3>A Message For You ❤️</h3>
+
+            <div class="message">
+              Hey bae! Thank you for always making me smile.<br><br>
+
+              You are my favorite person in the whole world 🐱<br><br>
+
+              I love you so much! Keep being amazing ✨
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Envelope 4 -->
+    <div class="envelope">
+
+      <div class="envelope-inner">
+
+        <div class="envelope-front">
+          <div class="envelope-title">
+            More Cats 🐱
+          </div>
+        </div>
+
+        <div class="envelope-back">
+
+          <button class="back-btn">
+            ⬅ Back
+          </button>
+
+          <div class="content">
+
+            <h3>More Cats!! 😻</h3>
+
+            <div class="image-gallery">
+              <img src="016e12c6-60e2-4cb4-bac7-bd02a6833863.jpg">
+              <img src="8dcaefab-481f-44fb-8603-ba829c63a516.jpg">
+              <img src="38ba8282-0ca8-438a-a818-7d074816fd42.jpg">
+              <img src="99de2687-5432-47a4-91d5-3c3b1c452dbd.jpg">
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    Made with ❤️ & lots of cat energy 🐱
+  </footer>
+
+  <canvas class="confetti" id="confetti"></canvas>
+
+  <script>
+
+    // =========================
+    // MUSIC
+    // =========================
+
+    const music = document.getElementById('bgMusic');
+
+    window.addEventListener('load', () => {
+      music.volume = 0.45;
+    });
+
+    const musicBtn = document.createElement('button');
+
+    musicBtn.textContent = '🎵 Play Music';
+    musicBtn.classList.add('music-btn');
+
+    document.body.appendChild(musicBtn);
+
+    musicBtn.addEventListener('click', () => {
+
+      if (music.paused) {
+        music.play();
+        musicBtn.textContent = '⏸️ Pause Music';
+      } else {
+        music.pause();
+        musicBtn.textContent = '🎵 Play Music';
+      }
+
+    });
+
+    // Auto play after first interaction
+    document.body.addEventListener('click', () => {
+
+      if (music.paused) {
+
+        music.play().catch(() => {});
+        musicBtn.textContent = '⏸️ Pause Music';
+
+      }
+
+    }, { once: true });
+
+
+    // =========================
+    // ENVELOPES
+    // =========================
+
+    document.querySelectorAll('.envelope').forEach(env => {
+
+      env.addEventListener('click', (e) => {
+
+        if (e.target.classList.contains('back-btn')) return;
+
+        if (!env.classList.contains('open')) {
+          env.classList.add('open');
+          createConfetti();
+        }
+
+      });
+
+      const backBtn = env.querySelector('.back-btn');
+
+      backBtn.addEventListener('click', (e) => {
+
+        e.stopPropagation();
+        env.classList.remove('open');
+
+      });
+
+    });
+
+
+    // =========================
+    // CONFETTI
+    // =========================
+
+    let confettiRunning = false;
+
+    function createConfetti() {
+
+      if (confettiRunning) return;
+
+      confettiRunning = true;
+
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = [
+        '#ff7b7b',
+        '#c9b8f5',
+        '#a8e6cf',
+        '#ffe08a',
+        '#ffb7c5'
+      ];
+
+      const pieces = [];
+
+      for (let i = 0; i < 150; i++) {
+
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 12 + 8,
+          speed: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          angle: Math.random() * 360,
+          rotationSpeed: Math.random() * 0.1 + 0.05
+        });
+
+      }
+
+      let animationFrame;
+
+      function animate() {
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let stillGoing = false;
+
+        pieces.forEach(p => {
+
+          p.y += p.speed;
+          p.angle += p.rotationSpeed;
+          p.speed *= 0.99;
+
+          ctx.save();
+
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.angle);
+
+          ctx.fillStyle = p.color;
+
+          ctx.fillRect(
+            -p.size / 2,
+            -p.size / 2,
+            p.size,
+            p.size
+          );
+
+          ctx.restore();
+
+          if (p.y < canvas.height + 50) {
+            stillGoing = true;
+          }
+
+        });
+
+        if (stillGoing) {
+          animationFrame = requestAnimationFrame(animate);
+        }
+
+      }
+
+      animate();
+
+      setTimeout(() => {
+
+        cancelAnimationFrame(animationFrame);
+
+        ctx.clearRect(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+
+        confettiRunning = false;
+
+      }, 6000);
+
+    }
+
+    window.addEventListener('resize', () => {
+
+      const canvas = document.getElementById('confetti');
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+    });
+
+  </script>
+
+</body>
+</html>
